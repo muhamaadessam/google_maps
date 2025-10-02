@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_maps/utils/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 
 import '../generated/assets.dart';
 
@@ -15,8 +15,9 @@ class CustomGoogleMap extends StatefulWidget {
 class _CustomGoogleMapState extends State<CustomGoogleMap> {
   late CameraPosition _initialCameraPosition;
   GoogleMapController? _googleMapController;
-  late Location location;
+  late LocationService locationService;
   final Set<Marker> _markers = {};
+  bool _isFirstCall = true;
 
   final LatLng _homeLocation = const LatLng(
     30.080346959966928,
@@ -27,9 +28,9 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   @override
   void initState() {
     super.initState();
-    _initialCameraPosition = CameraPosition(target: _homeLocation, zoom: 17);
+    _initialCameraPosition = CameraPosition(target: _homeLocation, zoom: 20);
     _currentStyle = Assets.nightMapStyle;
-    location = Location();
+    locationService = LocationService();
     initMyLocation();
   }
 
@@ -45,61 +46,46 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     _currentStyle = style;
   }
 
-  Future<void> checkAndRequestLocationService() async {
-    var serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        return;
-      }
+  Future<void> initMyLocation() async {
+    await locationService.checkAndRequestLocationService();
+
+    var permission = await locationService.checkAndRequestLocationPermission();
+    if (!permission) return;
+    locationService.getRealTimeLocationData((locationData) async {
+      LatLng latLng = LatLng(locationData.latitude!, locationData.longitude!);
+      locationService.location.changeSettings(distanceFilter: 2);
+      updateMyCamera(latLng);
+      setMyLocationMarker(latLng);
+    });
+  }
+
+  updateMyCamera(LatLng latLng) {
+    if (_isFirstCall) {
+      CameraPosition cameraPosition = CameraPosition(target: latLng, zoom: 1);
+      _googleMapController?.animateCamera(
+        CameraUpdate.newCameraPosition(cameraPosition),
+      );
+      _isFirstCall = false;
+    } else {
+      _googleMapController?.animateCamera(CameraUpdate.newLatLng(latLng));
     }
   }
 
-  Future<bool> checkAndRequestLocationPermission() async {
-    var permission = await location.hasPermission();
-    if (permission == PermissionStatus.denied) {
-      permission = await location.requestPermission();
-      if (permission != PermissionStatus.granted) {
-        return false;
-      }
-    }
-    if (permission == PermissionStatus.deniedForever) {
-      return false;
-    }
-    return true;
-  }
-
-  Future<void> getLocationData() async {
+  setMyLocationMarker(LatLng latLng) async {
     var customIcon = await BitmapDescriptor.asset(
       ImageConfiguration(),
       Assets.placeholder,
       width: 40,
       height: 40,
     );
-    location.changeSettings(distanceFilter: 2);
-    location.onLocationChanged.listen((locationData) {
-      _googleMapController?.animateCamera(
-        CameraUpdate.newLatLng(
-          LatLng(locationData.latitude!, locationData.longitude!),
-        ),
-      );
-
-      var marker = Marker(
-        markerId: MarkerId('my_location'),
-        position: LatLng(locationData.latitude!, locationData.longitude!),
-        infoWindow: InfoWindow(title: 'My Location'),
-        icon: customIcon,
-      );
-      _markers.add(marker);
-      setState(() {});
-    });
-  }
-
-  Future<void> initMyLocation() async {
-    await checkAndRequestLocationService();
-    var permission = await checkAndRequestLocationPermission();
-    if (!permission) return;
-    await getLocationData();
+    var marker = Marker(
+      markerId: MarkerId('my_location'),
+      position: latLng,
+      infoWindow: InfoWindow(title: 'My Location'),
+      icon: customIcon,
+    );
+    _markers.add(marker);
+    setState(() {});
   }
 
   @override
