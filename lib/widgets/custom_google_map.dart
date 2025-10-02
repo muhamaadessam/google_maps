@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps/models/place_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 import '../generated/assets.dart';
 
@@ -14,80 +14,97 @@ class CustomGoogleMap extends StatefulWidget {
 
 class _CustomGoogleMapState extends State<CustomGoogleMap> {
   late CameraPosition _initialCameraPosition;
-  late GoogleMapController _googleMapController;
+  GoogleMapController? _googleMapController;
+  late Location location;
   final Set<Marker> _markers = {};
-  final Set<Circle> _circles = {};
 
-  final LatLng _workLocation = const LatLng(
-    30.06135618246489,
-    31.351897773425733,
-  );
   final LatLng _homeLocation = const LatLng(
     30.080346959966928,
     31.263277207445874,
   );
-
-  late LatLng _currentLocation;
   late String _currentStyle;
 
   @override
   void initState() {
     super.initState();
-    _initialCameraPosition = CameraPosition(target: _homeLocation, zoom: 12);
-    _currentLocation = _homeLocation;
+    _initialCameraPosition = CameraPosition(target: _homeLocation, zoom: 17);
     _currentStyle = Assets.nightMapStyle;
-    initMarkers();
-    initCircles();
+    location = Location();
+    initMyLocation();
   }
 
   Future<void> initMapStyle() async {
     final styleJson = await rootBundle.loadString(Assets.nightMapStyle);
-    _googleMapController.setMapStyle(styleJson);
+    _googleMapController!.setMapStyle(styleJson);
     _currentStyle = Assets.nightMapStyle;
   }
 
   changeMapStyle(String style) async {
     final styleJson = await rootBundle.loadString(style);
-    _googleMapController.setMapStyle(styleJson);
+    _googleMapController!.setMapStyle(styleJson);
     _currentStyle = style;
   }
 
-  initMarkers() async {
+  Future<void> checkAndRequestLocationService() async {
+    var serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+  }
+
+  Future<bool> checkAndRequestLocationPermission() async {
+    var permission = await location.hasPermission();
+    if (permission == PermissionStatus.denied) {
+      permission = await location.requestPermission();
+      if (permission != PermissionStatus.granted) {
+        return false;
+      }
+    }
+    if (permission == PermissionStatus.deniedForever) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> getLocationData() async {
     var customIcon = await BitmapDescriptor.asset(
       ImageConfiguration(),
       Assets.placeholder,
       width: 40,
       height: 40,
     );
-    var markers = places.map(
-      (place) => Marker(
-        markerId: MarkerId(place.id.toString()),
-        position: place.latLog,
-        infoWindow: InfoWindow(title: place.name),
+    location.changeSettings(distanceFilter: 2);
+    location.onLocationChanged.listen((locationData) {
+      _googleMapController?.animateCamera(
+        CameraUpdate.newLatLng(
+          LatLng(locationData.latitude!, locationData.longitude!),
+        ),
+      );
+
+      var marker = Marker(
+        markerId: MarkerId('my_location'),
+        position: LatLng(locationData.latitude!, locationData.longitude!),
+        infoWindow: InfoWindow(title: 'My Location'),
         icon: customIcon,
-      ),
-    );
-    _markers.addAll(markers);
-    setState(() {});
+      );
+      _markers.add(marker);
+      setState(() {});
+    });
   }
 
-  initCircles() {
-    var circle = Circle(
-      circleId: CircleId('circle'),
-      center: _homeLocation,
-      radius: 1000,
-      fillColor: Colors.pink.withValues(alpha: 0.3),
-      strokeColor: Colors.pink,
-      strokeWidth: 2,
-    );
-    _circles.add(circle);
-    setState(() {});
+  Future<void> initMyLocation() async {
+    await checkAndRequestLocationService();
+    var permission = await checkAndRequestLocationPermission();
+    if (!permission) return;
+    await getLocationData();
   }
-
 
   @override
   void dispose() {
-    _googleMapController.dispose();
+    _googleMapController!.dispose();
     super.dispose();
   }
 
@@ -102,7 +119,6 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
             initMapStyle();
           },
           markers: _markers,
-         circles: _circles,
           zoomControlsEnabled: false,
         ),
         Positioned(
@@ -111,26 +127,6 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
           child: Row(
             spacing: 20,
             children: [
-              FloatingActionButton.extended(
-                onPressed: () {
-                  if (_currentLocation == _homeLocation) {
-                    _currentLocation = _workLocation;
-                  } else {
-                    _currentLocation = _homeLocation;
-                  }
-                  _googleMapController.animateCamera(
-                    CameraUpdate.newLatLng(_currentLocation),
-                  );
-                  setState(() {});
-                },
-                label: Text(
-                  'Go to ${_currentLocation == _homeLocation
-                      ? "Work"
-                      : _workLocation == _currentLocation
-                      ? "Home"
-                      : "Unknown"}',
-                ),
-              ),
               FloatingActionButton.extended(
                 onPressed: () {
                   changeMapStyle(
