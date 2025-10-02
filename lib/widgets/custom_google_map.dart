@@ -16,7 +16,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   late CameraPosition _initialCameraPosition;
   late GoogleMapController _googleMapController;
   final Set<Marker> _markers = {};
-  final Set<Polygon> _polygons = {};
+  final Set<Circle> _circles = {};
 
   final LatLng _workLocation = const LatLng(
     30.06135618246489,
@@ -37,7 +37,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     _currentLocation = _homeLocation;
     _currentStyle = Assets.nightMapStyle;
     initMarkers();
-    initPolygons();
+    initCircles();
   }
 
   Future<void> initMapStyle() async {
@@ -71,26 +71,19 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     setState(() {});
   }
 
-  initPolygons() {
-    var polygon = Polygon(
-      polygonId: PolygonId('polygon'),
-      holes: [
-        [
-          LatLng(30.066616924119746, 31.305543653882356),
-          LatLng(30.061296117428927, 31.307996444811835),
-          LatLng(30.058842384828786, 31.30299529966991),
-          LatLng(30.061902648696826, 31.30086105301699),
-          LatLng(30.064080616708267, 31.29815342666628),
-        ],
-      ],
-      points: List.generate(places.length, (index) => places[index].latLog),
-      fillColor: Colors.red.withValues(alpha: 0.3),
-      strokeColor: Colors.red,
+  initCircles() {
+    var circle = Circle(
+      circleId: CircleId('circle'),
+      center: _homeLocation,
+      radius: 1000,
+      fillColor: Colors.pink.withValues(alpha: 0.3),
+      strokeColor: Colors.pink,
       strokeWidth: 2,
     );
-    _polygons.add(polygon);
+    _circles.add(circle);
     setState(() {});
   }
+
 
   @override
   void dispose() {
@@ -109,7 +102,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
             initMapStyle();
           },
           markers: _markers,
-         polygons: _polygons,
+         circles: _circles,
           zoomControlsEnabled: false,
         ),
         Positioned(
