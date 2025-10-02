@@ -16,6 +16,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   late CameraPosition _initialCameraPosition;
   late GoogleMapController _googleMapController;
   final Set<Marker> _markers = {};
+  final Set<Polyline> _polylines = {};
 
   final LatLng _workLocation = const LatLng(
     30.06135618246489,
@@ -25,16 +26,20 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     30.080346959966928,
     31.263277207445874,
   );
+  final LatLng _schoolLocation = const LatLng(
+      30.0197290262373, 31.381094900512483
+  );
   late LatLng _currentLocation;
   late String _currentStyle;
 
   @override
   void initState() {
     super.initState();
-    _initialCameraPosition = CameraPosition(target: _homeLocation, zoom: 19);
+    _initialCameraPosition = CameraPosition(target: _homeLocation, zoom: 12);
     _currentLocation = _homeLocation;
     _currentStyle = Assets.nightMapStyle;
     initMarkers();
+    initPolylines();
   }
 
   Future<void> initMapStyle() async {
@@ -68,6 +73,23 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     setState(() {});
   }
 
+  initPolylines() {
+    var polyline = Polyline(
+      polylineId: PolylineId('polyline'),
+      startCap: Cap.roundCap,
+      endCap: Cap.roundCap,
+
+      points: [
+        _homeLocation,
+        _schoolLocation,
+      ],
+      color: Colors.pinkAccent,
+      width: 2,
+    );
+    _polylines.add(polyline);
+    setState(() {});
+  }
+
   @override
   void dispose() {
     _googleMapController.dispose();
@@ -85,6 +107,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
             initMapStyle();
           },
           markers: _markers,
+          polylines: _polylines,
           zoomControlsEnabled: false,
         ),
         Positioned(

@@ -19,4 +19,9 @@ List<PlaceModel> places = [
     id: 2,
     latLog: const LatLng(30.06135618246489, 31.351897773425733),
   ),
+  PlaceModel(
+    name: 'Al-Azhar Mosque',
+    id: 3,
+    latLog: const LatLng(30.04587848123342, 31.26256182922685),
+  ),
 ];
