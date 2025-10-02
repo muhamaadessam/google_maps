@@ -27,7 +27,8 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
     31.263277207445874,
   );
   final LatLng _schoolLocation = const LatLng(
-      30.0197290262373, 31.381094900512483
+    30.0197290262373,
+    31.381094900512483,
   );
   late LatLng _currentLocation;
   late String _currentStyle;
@@ -79,10 +80,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
       startCap: Cap.roundCap,
       endCap: Cap.roundCap,
 
-      points: [
-        _homeLocation,
-        _schoolLocation,
-      ],
+      points: [_homeLocation, _schoolLocation],
       color: Colors.pinkAccent,
       width: 2,
     );
@@ -135,7 +133,6 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
                       ? "Home"
                       : "Unknown"}',
                 ),
-                // icon: const Icon(Icons.add),
               ),
               FloatingActionButton.extended(
                 onPressed: () {
@@ -153,7 +150,6 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
                       ? "Night"
                       : "Unknown"}',
                 ),
-                // icon: const Icon(Icons.add),
               ),
             ],
           ),
