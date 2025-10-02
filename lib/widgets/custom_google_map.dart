@@ -47,13 +47,9 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   }
 
   Future<void> initMyLocation() async {
-    await locationService.checkAndRequestLocationService();
 
-    var permission = await locationService.checkAndRequestLocationPermission();
-    if (!permission) return;
     locationService.getRealTimeLocationData((locationData) async {
       LatLng latLng = LatLng(locationData.latitude!, locationData.longitude!);
-      locationService.location.changeSettings(distanceFilter: 2);
       updateMyCamera(latLng);
       setMyLocationMarker(latLng);
     });
