@@ -101,7 +101,7 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
                 },
                 label: Text(
                   'Change Map Style to ${_currentStyle == Assets.nightMapStyle
-                      ? "Silver"
+                      ? "Retro"
                       : _currentStyle == Assets.retroMapStyle
                       ? "Night"
                       : "Unknown"}',
