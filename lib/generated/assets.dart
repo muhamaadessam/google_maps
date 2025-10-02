@@ -3,6 +3,7 @@ class Assets {
   Assets._();
 
   static const String nightMapStyle = 'assets/maps_styles/night_map_style.json';
+  static const String placeholder = 'assets/icons/placeholder.png';
   static const String retroMapStyle = 'assets/maps_styles/retro_map_style.json';
 
 }
