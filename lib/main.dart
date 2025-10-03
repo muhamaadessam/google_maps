@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'features/route_tracking/route_tracking_google_map.dart';
+import 'package:google_maps/core/network/dio_helper.dart';
+import 'features/route_tracking/screen/route_tracking_google_map.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DioHelper.init();
   runApp(const MyApp());
 }
 
