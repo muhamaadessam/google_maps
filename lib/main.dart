@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps/widgets/custom_google_map.dart';
+import 'features/route_tracking/route_tracking_google_map.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const CustomGoogleMap(),
+      home: const RouteTrackingGoogleMap(),
     );
   }
 }

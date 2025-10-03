@@ -32,14 +32,22 @@ class LocationService {
     location.changeSettings(distanceFilter: 2);
     location.onLocationChanged.listen(onData);
   }
+
+  Future<LocationData> getLocationData() async {
+    await checkAndRequestLocationService();
+    await checkAndRequestLocationPermission();
+    return location.getLocation();
+  }
 }
 
 class LocationServiceException implements Exception {
   final String? message;
+
   LocationServiceException({this.message});
 }
 
 class LocationPermissionException implements Exception {
   final String? message;
+
   LocationPermissionException({this.message});
 }

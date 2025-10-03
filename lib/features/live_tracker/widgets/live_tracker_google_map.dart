@@ -3,16 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:google_maps/utils/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../generated/assets.dart';
+import '../../../generated/assets.dart';
 
-class CustomGoogleMap extends StatefulWidget {
-  const CustomGoogleMap({super.key});
+class LiveTrackerGoogleMap extends StatefulWidget {
+  const LiveTrackerGoogleMap({super.key});
 
   @override
-  State<CustomGoogleMap> createState() => _CustomGoogleMapState();
+  State<LiveTrackerGoogleMap> createState() => _LiveTrackerGoogleMapState();
 }
 
-class _CustomGoogleMapState extends State<CustomGoogleMap> {
+class _LiveTrackerGoogleMapState extends State<LiveTrackerGoogleMap> {
   late CameraPosition _initialCameraPosition;
   GoogleMapController? _googleMapController;
   late LocationService locationService;
@@ -47,7 +47,6 @@ class _CustomGoogleMapState extends State<CustomGoogleMap> {
   }
 
   Future<void> initMyLocation() async {
-
     locationService.getRealTimeLocationData((locationData) async {
       LatLng latLng = LatLng(locationData.latitude!, locationData.longitude!);
       updateMyCamera(latLng);
