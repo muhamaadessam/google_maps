@@ -1,9 +1,6 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-
-
 
 class DioHelper {
   static Dio? dio;
@@ -25,7 +22,7 @@ class DioHelper {
       ]);
   }
 
-  static Future<Response<dynamic>> getData({
+  static Future<Response> getData({
     required String endPoint,
     String? refreshToken,
     Map<String, dynamic>? query,
@@ -39,7 +36,6 @@ class DioHelper {
     final response = await dio!.get(endPoint, queryParameters: query);
     return response;
   }
-
 
   static Future<Response<dynamic>> postData({
     required String endPoint,

@@ -28,7 +28,7 @@ class _LiveTrackerGoogleMapState extends State<LiveTrackerGoogleMap> {
   @override
   void initState() {
     super.initState();
-    _initialCameraPosition = CameraPosition(target: _homeLocation, zoom: 1);
+    _initialCameraPosition = CameraPosition(target: _homeLocation, zoom: 20);
     _currentStyle = Assets.nightMapStyle;
     locationService = LocationService();
     initMyLocation();

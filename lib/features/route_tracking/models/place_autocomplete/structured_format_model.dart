@@ -1,5 +1,5 @@
-import 'package:google_maps/features/route_tracking/models/secondary_text_model.dart';
-import 'package:google_maps/features/route_tracking/models/text_model.dart';
+import 'package:google_maps/features/route_tracking/models/place_autocomplete/secondary_text_model.dart';
+import 'package:google_maps/features/route_tracking/models/place_autocomplete/text_model.dart';
 
 class StructuredFormatModel {
   TextModel? mainText;

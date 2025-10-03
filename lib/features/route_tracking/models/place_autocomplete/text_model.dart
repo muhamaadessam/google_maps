@@ -1,17 +1,18 @@
+
 import 'matches_model.dart';
 
 class TextModel {
   String? text;
-  List<Matches>? matches;
+  List<MatchesModel>? matches;
 
   TextModel({this.text, this.matches});
 
   TextModel.fromJson(Map<String, dynamic> json) {
     text = json['text'];
     if (json['matches'] != null) {
-      matches = <Matches>[];
+      matches = <MatchesModel>[];
       json['matches'].forEach((v) {
-        matches!.add(new Matches.fromJson(v));
+        matches!.add(new MatchesModel.fromJson(v));
       });
     }
   }

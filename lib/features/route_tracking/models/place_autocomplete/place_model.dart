@@ -1,17 +1,18 @@
-import 'package:google_maps/features/route_tracking/models/structured_format_model.dart';
-import 'package:google_maps/features/route_tracking/models/text_model.dart';
 
-class PlaceAutocompleteModel {
+import 'package:google_maps/features/route_tracking/models/place_autocomplete/structured_format_model.dart';
+import 'package:google_maps/features/route_tracking/models/place_autocomplete/text_model.dart';
+
+class PlaceModel {
   String? place;
   String? placeId;
   TextModel? text;
   StructuredFormatModel? structuredFormat;
   List<String>? types;
 
-  PlaceAutocompleteModel(
+  PlaceModel(
       {this.place, this.placeId, this.text, this.structuredFormat, this.types});
 
-  PlaceAutocompleteModel.fromJson(Map<String, dynamic> json) {
+  PlaceModel.fromJson(Map<String, dynamic> json) {
     final placePrediction = json['placePrediction'] ?? {}; // 👈 safe access
 
     place = placePrediction['place'];
