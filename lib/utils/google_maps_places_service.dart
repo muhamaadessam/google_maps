@@ -5,16 +5,23 @@ import '../features/route_tracking/models/place_details/place_details_model.dart
 class GoogleMapsPlacesService {
   final String baseURL = 'https://places.googleapis.com/v1/places';
 
-  Future<List<PlaceModel>> getPlaceAutocomplete({required String input}) async {
+  Future<List<PlaceModel>> getPlaceAutocomplete({
+    required String input,
+    required String sessionToken,
+  }) async {
     final response = await DioHelper.postData(
       endPoint: '$baseURL:autocomplete',
-      data: {'input': input},
+      data: {'input': input, 'sessionToken': sessionToken},
     );
 
     if (response.statusCode == 200) {
-      return (response.data['suggestions'] as List)
-          .map((e) => PlaceModel.fromJson(e))
-          .toList();
+      if (response.data['suggestions'] != null) {
+        return (response.data['suggestions'] as List)
+            .map((e) => PlaceModel.fromJson(e))
+            .toList();
+      } else {
+        return [];
+      }
     } else {
       throw Exception(response.data['error']['message']);
     }

@@ -23,6 +23,7 @@ class _RouteTrackingGoogleMapState extends State<RouteTrackingGoogleMap> {
   late TextEditingController _editingController;
   late List<PlaceModel> places;
   late PlaceDetailsModel? placeDetails;
+  String? sessionToken;
   late Uuid uuid;
 
   GoogleMapsPlacesService googleMapsPlacesService = GoogleMapsPlacesService();
@@ -42,8 +43,10 @@ class _RouteTrackingGoogleMapState extends State<RouteTrackingGoogleMap> {
   void fetchPredictions() {
     _editingController.addListener(() async {
       if (_editingController.text.isNotEmpty) {
+        sessionToken ??= uuid.v4();
         var result = await googleMapsPlacesService.getPlaceAutocomplete(
           input: _editingController.text,
+          sessionToken: sessionToken!,
         );
         places.clear();
         places.addAll(result);
@@ -145,6 +148,7 @@ class _RouteTrackingGoogleMapState extends State<RouteTrackingGoogleMap> {
                           ),
                         );
                         _markers.add(currentLocationMarker);
+                        sessionToken = null;
                         places.clear();
                         setState(() {});
                       },
