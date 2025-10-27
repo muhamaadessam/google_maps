@@ -31,7 +31,6 @@ class DioHelper {
       "Accept": "application/json",
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
-      // 'Authorization': 'Bearer ${CacheHelper.get(key: 'accessToken')}',
     };
     final response = await dio!.get(endPoint, queryParameters: query);
     return response;
@@ -40,12 +39,13 @@ class DioHelper {
   static Future<Response<dynamic>> postData({
     required String endPoint,
     dynamic data,
+    Options? options,
   }) async {
     dio!.options.headers = {
       "Accept": "application/json",
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
-      // 'Authorization': 'Bearer ${CacheHelper.get(key: 'accessToken')}',
+      ...?options?.headers,
     };
     final response = await dio!.post(endPoint, data: data);
     return response;

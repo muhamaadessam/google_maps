@@ -1,6 +1,6 @@
-import '../core/network/dio_helper.dart';
-import '../features/route_tracking/models/place_autocomplete/place_model.dart';
-import '../features/route_tracking/models/place_details/place_details_model.dart';
+import '../../core/network/dio_helper.dart';
+import '../../features/route_tracking/models/place_autocomplete/place_model.dart';
+import '../../features/route_tracking/models/place_details/place_details_model.dart';
 
 class GoogleMapsPlacesService {
   final String baseURL = 'https://places.googleapis.com/v1/places';

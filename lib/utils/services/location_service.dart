@@ -4,6 +4,7 @@ class LocationService {
   final Location location = Location();
 
   Future<void> checkAndRequestLocationService() async {
+    print('checkAndRequestLocationService');
     var serviceEnabled = await location.serviceEnabled();
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
@@ -11,9 +12,11 @@ class LocationService {
         throw LocationServiceException();
       }
     }
+    print('serviceEnabled: $serviceEnabled');
   }
 
   Future<void> checkAndRequestLocationPermission() async {
+    print('checkAndRequestLocationPermission');
     var permission = await location.hasPermission();
     if (permission == PermissionStatus.deniedForever) {
       throw LocationPermissionException();
@@ -24,6 +27,7 @@ class LocationService {
         throw LocationPermissionException();
       }
     }
+    print('permission: $permission');
   }
 
   void getRealTimeLocationData(void Function(LocationData)? onData) async {
@@ -34,9 +38,16 @@ class LocationService {
   }
 
   Future<LocationData> getLocationData() async {
-    await checkAndRequestLocationService();
-    await checkAndRequestLocationPermission();
-    return location.getLocation();
+    print('getLocationData');
+    try {
+      await checkAndRequestLocationService();
+      await checkAndRequestLocationPermission();
+
+      return location.getLocation();
+    } catch (e) {
+      print(e);
+      throw e;
+    }
   }
 }
 

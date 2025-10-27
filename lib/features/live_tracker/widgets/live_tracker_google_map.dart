@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps/utils/location_service.dart';
+import 'package:google_maps/utils/services/location_service.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../generated/assets.dart';
